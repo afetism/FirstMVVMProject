@@ -4,6 +4,6 @@
              xmlns:local="clr-namespace:FirstMVVMProject"
              StartupUri="/views/AnketWindow.xaml">
     <Application.Resources>
-         
+      
     </Application.Resources>
 </Application>

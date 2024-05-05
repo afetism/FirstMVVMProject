@@ -1,33 +1,38 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace FirstMVVMProject.Models
 {
-    public class Person
+    public class Person : INotifyPropertyChanged
     {
+        private string name;
+        private string surname;
+        private string email;
+        private string phone;
+        private DateTime birthday;
 
-        public string Name { get; set; }
-        public string Surname { get; set; }
+        public event PropertyChangedEventHandler? PropertyChanged;
+        protected void OnPropertyChanged([CallerMemberName] string name = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
 
-        public string Email { get; set; }
+        public string Name { get => name; set { name=value; OnPropertyChanged(); } }
+        public string Surname { get => surname; set { surname=value; OnPropertyChanged(); } }
 
-        public string Phone { get; set; }
+        public string Email { get => email; set { email=value; OnPropertyChanged(); } }
 
-        public DateTime Birthday { get; set; }
+        public string Phone { get => phone; set { phone=value; OnPropertyChanged(); } }
+
+        public DateTime Birthday { get => birthday; set { birthday=value; OnPropertyChanged(); } }
 
         public override string ToString() => $"{Name}";
 
-        public override bool Equals(object? obj)
-        {
-            Person person = obj as Person;
-            if (person.Name==Name && person.Surname==Surname && person.Email==Email && person.Phone==Phone &&  person.Birthday==Birthday)
-            {
-                return true;
-            }
-            else return false;
-        }
+       
     }
 }

@@ -1,18 +1,13 @@
 ﻿using FirstMVVMProject.Commands;
 using FirstMVVMProject.DataBase;
 using FirstMVVMProject.Models;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Xml.Linq;
+
+
 
 namespace FirstMVVMProject.ViewModels
 {
@@ -33,12 +28,53 @@ namespace FirstMVVMProject.ViewModels
                 OnPropertyChanged();
             }
         }
+      
+        private Person _SelectedPerson { get; set; }
+        public Person SelectedPerson
+        {
+            get { return _SelectedPerson; }
+            set
+            {
+                _SelectedPerson = value;
+                OnPropertyChanged();
+
+                if (_SelectedPerson is not null)
+                {
+                   var result= MessageBox.Show($"{_SelectedPerson.ToString()}", "Do you want Edit?", MessageBoxButton.YesNo);
+                    if(result==MessageBoxResult.Yes)
+                    {
+                        SelectCommand.Execute(this);
+                        IsButtonEnabled=true;
+                    }
+                    
+                }
+
+            }
+        }
+        private bool _isButtonEnabled;
+
+        public bool IsButtonEnabled
+        {
+            get { return _isButtonEnabled; }
+            set
+            {
+                _isButtonEnabled = value;
+                OnPropertyChanged();
+            }
+        }
+
         public RelayCommand AddCommand { get; set; }    
         public RelayCommand SaveCommand { get; set; }
         public RelayCommand LoadCommand { get; set; }
+        public RelayCommand SelectCommand { get; set; }
+        public RelayCommand EditCommand { get; set; }
+
+
         public AnketViewModel() {
 
-            AddCommand = new RelayCommand(param => People.Add(Person) );
+            SelectedPerson=null;
+            IsButtonEnabled = false;
+            AddCommand = new RelayCommand(param => { People.Add(Person); Person=new(); });
             SaveCommand= new RelayCommand(param => Save(param), param =>
             {
                 return FilePath!=string.Empty;
@@ -47,8 +83,8 @@ namespace FirstMVVMProject.ViewModels
             {
                 return FilePath!=string.Empty;
             });
-
-
+            SelectCommand = new RelayCommand(param => Person=SelectedPerson);
+           
         }
 
       void Save(object param)
@@ -69,6 +105,7 @@ namespace FirstMVVMProject.ViewModels
 
             }
             saveData.SaveData();
+            FilePath=string.Empty;
             MessageBox.Show("All Data Saved!");
        }
         void Load(object param)
@@ -88,6 +125,7 @@ namespace FirstMVVMProject.ViewModels
             {
                 MessageBox.Show("Don't Found File");
             }
+            FilePath=string.Empty;
         }
 
 
